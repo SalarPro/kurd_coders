@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/home_screen/main_screen.dart';
+import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,105 +22,70 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget get _body {
-    return Column(
-      children: [
-        bannerView,
-        SizedBox(height: 30),
-        emailTextField,
-        passwordTextField,
-        Spacer(flex: 1),
-        loginBtn,
-        Spacer(flex: 3),
-      ],
+    return SingleChildScrollView(
+      child: SafeArea(
+        child: Column(
+          children: [
+            bannerView,
+            SizedBox(height: 30),
+            // emailTextField,
+            KTextField(
+              title: "Email",
+              hint: 'name@example.com',
+              controller: TextEditingController(),
+              icon: Assets.resourceIconsMail,
+            ),
+            KTextField(
+              isPassword: true,
+              title: "Password",
+              controller: TextEditingController(),
+              icon: Assets.resourceIconsPassword,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            loginBtn,
+            // Spacer(flex: 3),
+          ],
+        ),
+      ),
     );
   }
 
   Widget get bannerView {
-    return SafeArea(
-      child: Stack(
-        children: [
-          Image.asset(Assets.resourceImagesLoginBgTop),
-          Positioned(
-            top: 30,
-            left: 40,
-            child: Text(
-              "LOGIN",
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    return Stack(
+      children: [
+        Image.asset(Assets.resourceImagesLoginBgTop),
+        Positioned(
+          top: 30,
+          left: 40,
+          child: Text(
+            "LOGIN",
+            style: TextStyle(
+              fontSize: 50,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Image.asset(
-              Assets.resourceIconsLogo,
-              width: 100,
-              height: 100,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget get emailTextField {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(13),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 5,
-            color: Colors.black.withAlpha(100),
-            offset: Offset(2, 4),
-          )
-        ],
-      ),
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: TextField(
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Email",
         ),
-      ),
-    );
-  }
-
-  Widget get passwordTextField {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(13),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 5,
-            color: Colors.black.withAlpha(100),
-            offset: Offset(2, 4),
-          )
-        ],
-      ),
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: TextField(
-        obscureText: true,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Password",
-        ),
-      ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Image.asset(
+            Assets.resourceIconsLogo,
+            width: 100,
+            height: 100,
+          ),
+        )
+      ],
     );
   }
 
   Widget get loginBtn {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (contex) => MainScreen()));
       },
       child: Center(

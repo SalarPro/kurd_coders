@@ -33,6 +33,10 @@ class Assets {
   /// assets/icons/icon_login.png
   static const String resourceIconsIconLogin = "assets/icons/icon_login.png";
 
+  /// Assets for resourceIconsLeftArrow
+  /// assets/icons/left_arrow.png
+  static const String resourceIconsLeftArrow = "assets/icons/left_arrow.png";
+
   /// Assets for resourceIconsLogo
   /// assets/icons/logo.png
   static const String resourceIconsLogo = "assets/icons/logo.png";
@@ -40,6 +44,14 @@ class Assets {
   /// Assets for resourceIconsLogoSmall
   /// assets/icons/logo_small.png
   static const String resourceIconsLogoSmall = "assets/icons/logo_small.png";
+
+  /// Assets for resourceIconsMail
+  /// assets/icons/mail.png
+  static const String resourceIconsMail = "assets/icons/mail.png";
+
+  /// Assets for resourceIconsPassword
+  /// assets/icons/password.png
+  static const String resourceIconsPassword = "assets/icons/password.png";
 
   /// Assets for resourceIconsProfile
   /// assets/icons/profile.png
