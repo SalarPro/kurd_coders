@@ -24,7 +24,11 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Positioned.fill(child: _body),
             Positioned(
-                bottom: 16, left: 16, right: 16, child: _myNavigationBar),
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: _myNavigationBar,
+            ),
           ],
         ));
   }

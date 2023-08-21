@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
+import 'package:kurd_coders/src/damy_data.dart';
+import 'package:kurd_coders/src/models/post_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,22 +14,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).padding.bottom + 100,
-        top: MediaQuery.of(context).padding.top,
-      ),
-      children: [
-        cellType1(haveImage: true),
-        cellType1(haveImage: false),
-        cellType1(haveImage: false),
-        cellType1(haveImage: true),
-        cellType1(haveImage: true),
-      ],
-    );
+    return ListView.builder(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + 100,
+          top: MediaQuery.of(context).padding.top,
+        ),
+        itemCount: myPosts.length,
+        itemBuilder: (context, index) {
+          return cellType1(post: myPosts[index]);
+        });
   }
 
-  Widget cellType1({required bool haveImage}) {
+  Widget cellType1({required PostModel post}) {
     return Stack(
       children: [
         Container(
@@ -57,21 +56,44 @@ class _HomeScreenState extends State<HomeScreen> {
                     ).image,
                   ),
                   SizedBox(width: 10),
-                  Text("Azad Khorshed")
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Azad Khorshed",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      if (post.createdAt != null)
+                        Text(
+                          DateFormat('M/d hh:mma').format(post.createdAt!),
+                          style: TextStyle(
+                              fontSize: 11, color: Colors.grey.shade500),
+                        ),
+                    ],
+                  )
                 ],
               ),
               SizedBox(height: 10),
-              Text(
-                "I have a question about Flutter UI, how can question about Flutter UI, how can ",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        post.text ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 10),
-              if (haveImage)
+              if (post.imageUrl != null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(13),
-                  child: Image.asset(
-                    Assets.resourceImagesCodeImage,
+                  child: Image.network(
+                    post.imageUrl!,
                     width: double.infinity,
                     fit: BoxFit.contain,
                   ),
@@ -100,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "1.4 K",
+                  post.likesUserUID?.length.toString() ?? "0",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(width: 4),
@@ -133,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "255",
+                  post.comments?.length.toString() ?? "0",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(width: 4),
