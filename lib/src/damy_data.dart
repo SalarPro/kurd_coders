@@ -55,7 +55,7 @@ List<PostModel> get myPosts => [
             createdAt: DateTime(2023, 8, 25, 5, 25),
           ),
         ],
-        likesUserUID: ["1", "2", "10"],
+        // likesUserUID: null,
         createdAt: DateTime(2023, 8, 25, 5, 25),
         updateAt: DateTime(2023, 8, 25, 5, 25),
       ),

@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
+import 'package:kurd_coders/src/home_screen/screens/add_new_post_scree.dart';
 import 'package:kurd_coders/src/home_screen/screens/home_screen.dart';
 import 'package:kurd_coders/src/home_screen/screens/profile_screen.dart';
+import 'package:kurd_coders/src/login_screen/login_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -66,6 +68,10 @@ class _MainScreenState extends State<MainScreen> {
           navigationCell(
               title: "Home", imagePath: Assets.resourceIconsHomeIcon, index: 0),
           navigationCell(
+              title: "Home",
+              imagePath: Assets.resourceIconsHomeIcon,
+              index: -1),
+          navigationCell(
               title: "Profile",
               imagePath: Assets.resourceIconsProfile,
               index: 1),
@@ -74,12 +80,38 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  GestureDetector navigationCell({
+  Widget navigationCell({
     required String title,
     required String imagePath,
     required int index,
   }) {
     var isSelected = _selectedNavigatorIndex == index;
+
+    if (index == -1) {
+      return Transform.translate(
+        offset: Offset(0, -10),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => AddNewPostScreen()));
+          },
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Color(0xffF7E987),
+            ),
+            child: Icon(
+              Icons.add_rounded,
+              size: 40,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () {
         setState(() {

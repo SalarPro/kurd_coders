@@ -28,11 +28,15 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cached_network_image: ^3.2.3
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
   flutter_circular_text: ^0.3.1
+  image_cropper: ^5.0.0
+  image_picker: ^1.0.2
   intl: ^0.18.1
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0
