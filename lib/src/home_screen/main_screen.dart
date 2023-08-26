@@ -5,7 +5,6 @@ import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/home_screen/screens/add_new_post_scree.dart';
 import 'package:kurd_coders/src/home_screen/screens/home_screen.dart';
 import 'package:kurd_coders/src/home_screen/screens/profile_screen.dart';
-import 'package:kurd_coders/src/login_screen/login_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

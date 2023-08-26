@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
+import 'package:kurd_coders/src/helper/helper.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
 
 class AddNewPostScreen extends StatefulWidget {
@@ -15,7 +14,9 @@ class AddNewPostScreen extends StatefulWidget {
 
 class _AddNewPostScreenState extends State<AddNewPostScreen> {
   File? myImageFile;
+  
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,44 +48,7 @@ class _AddNewPostScreenState extends State<AddNewPostScreen> {
   }
 
   void selectimage() async {
-    final ImagePicker picker = ImagePicker();
-// Pick an image.
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      myImageFile = File(image.path);
-
-      CroppedFile? croppedFile = await ImageCropper().cropImage(
-        sourcePath: myImageFile!.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-        ],
-        compressFormat: ImageCompressFormat.jpg,
-        maxHeight: 1080,
-        maxWidth: 1080,
-        compressQuality: 50,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: true,
-          ),
-          IOSUiSettings(
-            title: 'Cropper',
-          ),
-          WebUiSettings(
-            context: context,
-          ),
-        ],
-      );
-      if (croppedFile != null) {
-        myImageFile = File(croppedFile.path);
-      }
-    } else {
-      myImageFile = null;
-    }
+    myImageFile = await KHelper.pickImage(cropTheImage: true);
     setState(() {});
   }
 }

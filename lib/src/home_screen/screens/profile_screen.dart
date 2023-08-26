@@ -102,9 +102,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditPRofileScreen()));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditPRofileScreen()))
+                        .then((value) {
+                      setState(() {});
+                    });
                   },
                   child: SafeArea(
                     child: Image.asset(
@@ -148,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(myUser.bio!),
                 ],
               ),
-            )
+            ),
         ],
       ),
     );

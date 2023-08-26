@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/damy_data.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
+import 'package:like_button/like_button.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,9 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   loadData() async {
     await Future.delayed(Duration(seconds: 2));
     homePost = myPosts;
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   @override
@@ -47,14 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } else {
       return ListView.builder(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + 100,
-            top: MediaQuery.of(context).padding.top,
-          ),
-          itemCount: homePost.length,
-          itemBuilder: (context, index) {
-            return cellType1(post: homePost[index]);
-          });
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + 100,
+          top: MediaQuery.of(context).padding.top,
+        ),
+        itemCount: homePost.length,
+        itemBuilder: (context, index) {
+          return cellType1(post: homePost[index]);
+        },
+      );
     }
   }
 
@@ -161,15 +161,22 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  post.likesUserUID?.length.toString() ?? "0",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                SizedBox(width: 4),
-                Image.asset(
-                  Assets.resourceIconsIconLike,
-                  width: 20,
-                  height: 20,
+                // Text(
+                //   post.likesUserUID?.length.toString() ?? "0",
+                //   style: TextStyle(fontWeight: FontWeight.w600),
+                // ),
+                // SizedBox(width: 4),
+                // Image.asset(
+                //   Assets.resourceIconsIconLike,
+                //   width: 20,
+                //   height: 20,
+                // ),
+                LikeButton(
+                  likeCount: post.likesUserUID?.length ?? 0,
+                  isLiked: post.likesUserUID?.contains("2210") ?? false,
+                  onTap: (value) async {
+                    return !value;
+                  },
                 ),
               ],
             ),

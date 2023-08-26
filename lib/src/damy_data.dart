@@ -23,16 +23,16 @@ import 'package:kurd_coders/src/models/comment_model.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/models/user_model.dart';
 
-UserModel get myUser => UserModel(
-      id: "1",
-      avatarUrl:
-          "https://media.sketchfab.com/models/624acae4597c40eb90aebc2650bc99bf/thumbnails/09e3261cc6204116b5fc611acb4eda6d/f4957ec96b79488298ec52c245986898.jpeg",
-      bio: "Flutter app developer",
-      birthday: DateTime(1997, 3, 30),
-      email: "inmfo@salaropro.con",
-      name: "Salar Khalid",
-      username: "salarpro",
-    );
+UserModel myUser = UserModel(
+  id: "1",
+  avatarUrl:
+      "https://media.sketchfab.com/models/624acae4597c40eb90aebc2650bc99bf/thumbnails/09e3261cc6204116b5fc611acb4eda6d/f4957ec96b79488298ec52c245986898.jpeg",
+  bio: "Flutter app developer",
+  birthday: DateTime(1997, 3, 30),
+  email: "info@salaropro.con",
+  name: "Salar Khalid",
+  username: "salarpro",
+);
 
 List<PostModel> get myPosts => [
       PostModel(
@@ -126,7 +126,7 @@ List<PostModel> get myPosts => [
             createdAt: DateTime(2023, 8, 25, 5, 25),
           ),
         ],
-        likesUserUID: [],
+        likesUserUID: ["11", "2210"],
         createdAt: DateTime(2023, 8, 25, 5, 25),
         updateAt: DateTime(2023, 8, 25, 5, 25),
       ),
@@ -145,7 +145,9 @@ List<PostModel> get myPosts => [
             createdAt: DateTime(2023, 8, 25, 5, 25),
           ),
         ],
-        likesUserUID: [],
+        likesUserUID: [
+          "11",
+        ],
         createdAt: DateTime(2023, 8, 25, 5, 25),
         updateAt: DateTime(2023, 8, 25, 5, 25),
       ),

@@ -1,8 +1,15 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
+import 'package:kurd_coders/src/damy_data.dart';
+import 'package:kurd_coders/src/helper/colors.dart';
+import 'package:kurd_coders/src/helper/helper.dart';
+import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/login_screen/login_screen.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
 
@@ -14,16 +21,73 @@ class EditPRofileScreen extends StatefulWidget {
 }
 
 class _EditPRofileScreenState extends State<EditPRofileScreen> {
-  var birthdayTEC = TextEditingController();
+  var bioTEC = TextEditingController();
+  var nameTEC = TextEditingController();
+  var usernameTEC = TextEditingController();
+  var emailTEC = TextEditingController();
+  DateTime? userBirthday;
+  File? imageFile;
+
+  String? userAvatarUrl;
+
+  bool isLoading = false;
+
+  loadData() {
+    bioTEC.text = myUser.bio ?? "";
+    nameTEC.text = myUser.name ?? "";
+    usernameTEC.text = myUser.username ?? "";
+    emailTEC.text = myUser.email ?? "";
+    userBirthday = myUser.birthday;
+
+    userAvatarUrl = myUser.avatarUrl;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade300,
       appBar: _appBar,
-      body: _body,
+      body: _bodyLayout,
     );
   }
+
+  get _bodyLayout => Stack(
+        children: [
+          _body,
+          _loadingView,
+        ],
+      );
+
+  get _loadingView => isLoading
+      ? BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            color: Colors.black.withAlpha(0),
+            width: double.infinity,
+            height: double.infinity,
+            child: Center(
+                child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator.adaptive(
+                  strokeWidth: 10,
+                  semanticsValue: "Loading",
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text("Saving Data ...")
+              ],
+            )),
+          ),
+        )
+      : Container();
 
   get _body => SingleChildScrollView(
         child: Center(
@@ -35,39 +99,21 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
               CircleAvatar(
                 radius: 80,
                 backgroundColor: Colors.grey.shade400,
+                backgroundImage: imageFile == null
+                    ? Image.network(userAvatarUrl!).image
+                    : Image.file(imageFile!).image,
               ),
               SizedBox(
                 height: 20,
               ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: Offset(1, 3), // changes position of shadow
-                    ),
-                  ],
-                  color: Color(0xffF9E995),
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Select image ",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    SizedBox(width: 15),
-                    Image.asset(
-                      Assets.resourceIconsAddImage,
-                      width: 22,
-                      height: 22,
-                    ),
-                  ],
-                ),
+              KWidget.btnMeduam(
+                title: "Select Image",
+                image: Assets.resourceIconsAddImage,
+                color: KColors.text.shade900,
+                bgColor: KColors.primaryColor,
+                onTap: () {
+                  pickImage();
+                },
               ),
               SizedBox(
                 height: 20,
@@ -100,12 +146,10 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: TextField(
-                        controller: TextEditingController(
-                          text:
-                              "A box shadow is a visual effect used in the Flutter framework that lets you add shadows to any widget. It is a built-in widget that takes ets you add shadows to any widget. It is a built-in widget that takes",
-                        ),
+                        controller: bioTEC,
                         decoration: InputDecoration(border: InputBorder.none),
-                        maxLines: 5,
+                        // maxLines: 5,
+                        maxLines: null,
                         maxLength: 255,
                       ),
                     ),
@@ -115,9 +159,10 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
               KTextField(
                 title: "Name",
                 hint: 'Full name',
-                controller: TextEditingController(text: "Karam Zeway"),
+                controller: nameTEC,
               ),
               KTextField(
+                controller: usernameTEC,
                 title: "Username",
                 hint: 'karamzeway',
                 icon: Assets.resourceIconsAt,
@@ -126,14 +171,17 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
                 isEnable: false,
                 title: "Email",
                 hint: 'name@example.com',
-                controller: TextEditingController(text: "info@test.com"),
+                controller: emailTEC,
                 icon: Assets.resourceIconsMail,
               ),
               // Bo chi l vere Row qabil naket
               KTextField(
                 title: 'Birthday',
                 hint: '1990/05/01',
-                controller: birthdayTEC,
+                controller: userBirthday == null
+                    ? null
+                    : TextEditingController(
+                        text: DateFormat("yyyy/MM/d").format(userBirthday!)),
                 icon: Assets.resourceIconsBirthday,
                 onTap: () {
                   pickDate();
@@ -142,40 +190,16 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
               SizedBox(
                 height: 20,
               ),
-              Container(
-                width: 200,
-                height: 50,
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: Offset(1, 3), // changes position of shadow
-                    ),
-                  ],
-                  color: Color(0xff64A09A),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(13),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Save ",
-                      style: TextStyle(fontSize: 15, color: Colors.white),
-                    ),
-                    SizedBox(width: 15),
-                    Image.asset(
-                      Assets.resourceIconsSave,
-                      color: Colors.white,
-                      scale: 20,
-                    ),
-                  ],
-                ),
-              ),
+
+              KWidget.btnMeduam(
+                  title: "Save",
+                  image: Assets.resourceIconsSave,
+                  width: 300,
+                  color: KColors.text.shade900,
+                  bgColor: KColors.successColor,
+                  onTap: () {
+                    showAlertToSave();
+                  }),
               SizedBox(
                 height: 50,
               ),
@@ -240,28 +264,33 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
         ],
       );
 
-  get _appBarSaveIcon => Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Color(0xff64A09A),
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: Offset(1, 3), // changes position of shadow
+  get _appBarSaveIcon => GestureDetector(
+        onTap: () {
+          showAlertToSave();
+        },
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Color(0xff64A09A),
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: Offset(1, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Center(
+              child: Image.asset(
+                Assets.resourceIconsSave,
+                width: 22,
+                height: 22,
               ),
-            ],
-          ),
-          child: Center(
-            child: Image.asset(
-              Assets.resourceIconsSave,
-              width: 22,
-              height: 22,
             ),
           ),
         ),
@@ -307,11 +336,95 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
         ));
 
     if (pickedDate != null) {
-      print(pickedDate);
-
-      birthdayTEC.text = DateFormat("yyyy/MM/d HH:mm aa").format(pickedDate);
+      userBirthday = pickedDate;
       setState(() {});
-    } else {}
+    }
+  }
+
+  void pickImage() async {
+    File? pickedImage = await KHelper.pickImage(cropTheImage: true);
+    if (pickedImage != null) {
+      imageFile = pickedImage;
+    }
+    setState(() {});
+  }
+
+  showAlertToSave() {
+    if (isLoading) {
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Save"),
+        content: Text("Do you want to save the changes?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("No"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              save();
+            },
+            child: Text("Yes"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void save() async {
+    if (usernameTEC.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Username is empty"),
+          backgroundColor: KColors.mainColor,
+        ),
+      );
+      return;
+    }
+
+    if (userBirthday?.isAfter(DateTime.now().subtract(
+          Duration(
+            milliseconds: 31556926000 * 13,
+          ),
+        )) ??
+        true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Birthday is not valid"),
+          backgroundColor: KColors.mainColor,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.delayed(Duration(seconds: 2));
+
+    // TODO: save to database
+    myUser.bio = bioTEC.text;
+    myUser.name = nameTEC.text;
+    myUser.username = usernameTEC.text;
+    myUser.birthday = userBirthday;
+
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Data saved to database successfully"),
+        backgroundColor: KColors.successColor,
+      ),
+    );
+
+    Navigator.pop(context);
   }
 }
 
