@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/damy_data.dart';
-import 'package:kurd_coders/src/helper/colors.dart';
-import 'package:kurd_coders/src/helper/helper.dart';
+import 'package:kurd_coders/src/helper/k_colors.dart';
+import 'package:kurd_coders/src/helper/k_helper.dart';
 import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/login_screen/login_screen.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
@@ -106,7 +106,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
               SizedBox(
                 height: 20,
               ),
-              KWidget.btnMeduam(
+              KWidget.btnMedium(
                 title: "Select Image",
                 image: Assets.resourceIconsAddImage,
                 color: KColors.text.shade900,
@@ -191,62 +191,27 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
                 height: 20,
               ),
 
-              KWidget.btnMeduam(
+              KWidget.btnLarge(
                   title: "Save",
                   image: Assets.resourceIconsSave,
-                  width: 300,
-                  color: KColors.text.shade900,
-                  bgColor: KColors.successColor,
+                  color: KColors.text.shade50,
+                  bgColor: KColors.primaryColor,
                   onTap: () {
                     showAlertToSave();
                   }),
               SizedBox(
                 height: 50,
               ),
-              GestureDetector(
-                onTap: () {
-                  // TOD show alert to confirm logout
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                      (route) => false);
-                },
-                child: Container(
-                  width: 200,
-                  height: 50,
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: Offset(1, 3), // changes position of shadow
-                      ),
-                    ],
-                    color: Color.fromARGB(255, 92, 5, 5),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(13),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Save ",
-                        style: TextStyle(fontSize: 15, color: Colors.white),
-                      ),
-                      SizedBox(width: 15),
-                      Image.asset(
-                        Assets.resourceIconsSave,
-                        color: Colors.white,
-                        width: 24,
-                        height: 24,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              KWidget.btnMedium(
+                  title: "logout",
+                  bgColor: KColors.dangerColor,
+                  color: KColors.white,
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false);
+                  }),
               SizedBox(
                 height: 50,
               ),
@@ -331,7 +296,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
             DateTime.now().subtract(Duration(milliseconds: 31556926000 * 100)),
         lastDate: DateTime.now().subtract(
           Duration(
-            milliseconds: 31556926000 * 13,
+            milliseconds: 31556926000 * 5,
           ),
         ));
 
@@ -342,7 +307,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
   }
 
   void pickImage() async {
-    File? pickedImage = await KHelper.pickImage(cropTheImage: true);
+    File? pickedImage = await KHelper.pickImageFromGallery(cropTheImage: true);
     if (pickedImage != null) {
       imageFile = pickedImage;
     }
@@ -382,7 +347,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Username is empty"),
-          backgroundColor: KColors.mainColor,
+          backgroundColor: KColors.dangerColor,
         ),
       );
       return;
@@ -397,7 +362,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Birthday is not valid"),
-          backgroundColor: KColors.mainColor,
+          backgroundColor: KColors.dangerColor,
         ),
       );
       return;

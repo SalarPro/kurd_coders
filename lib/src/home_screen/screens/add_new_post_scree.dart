@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
-import 'package:kurd_coders/src/helper/helper.dart';
+import 'package:kurd_coders/src/helper/k_helper.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
 
 class AddNewPostScreen extends StatefulWidget {
@@ -48,7 +48,7 @@ class _AddNewPostScreenState extends State<AddNewPostScreen> {
   }
 
   void selectimage() async {
-    myImageFile = await KHelper.pickImage(cropTheImage: true);
+    myImageFile = await KHelper.pickImageFromGallery(cropTheImage: true);
     setState(() {});
   }
 }
