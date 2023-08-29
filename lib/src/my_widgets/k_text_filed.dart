@@ -17,6 +17,9 @@ class KTextField extends StatelessWidget {
     this.isEnable = true,
     this.isPassword = false,
     this.onTap,
+    this.dynamicHeight = false,
+    this.suffixIcon,
+    this.focusNode,
   });
 
   final TextEditingController? controller;
@@ -28,6 +31,9 @@ class KTextField extends StatelessWidget {
   final bool isEnable;
   final bool isPassword;
   final Function()? onTap;
+  final bool dynamicHeight;
+  final Widget? suffixIcon;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +109,11 @@ class KTextField extends StatelessWidget {
                         enabled: isEnable,
                         controller: controller,
                         decoration: InputDecoration(
-                            border: InputBorder.none, hintText: hint),
+                            suffixIcon: suffixIcon,
+                            border: InputBorder.none,
+                            hintText: hint),
+                        maxLines: dynamicHeight ? null : 1,
+                        focusNode: focusNode,
                       ),
                     ),
                   if (onTap != null)

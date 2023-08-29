@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:flutter_circular_text/circular_text.dart';
 import 'package:kurd_coders/src/damy_data.dart';
+import 'package:kurd_coders/src/firestore_test_screen.dart';
+import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/home_screen/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -152,6 +154,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+          KWidget.btnMedium(
+              title: "TESTS",
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => FirebaseTestScreen()));
+              }),
         ],
       ),
     );

@@ -20,7 +20,7 @@ class KHelper {
         CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: myImageFile.path,
           aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-          compressFormat: ImageCompressFormat.jpg,
+          compressFormat: ImageCompressFormat.png,
           maxHeight: 1080,
           maxWidth: 1080,
           compressQuality: 50,
