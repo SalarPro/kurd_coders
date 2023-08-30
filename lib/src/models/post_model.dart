@@ -23,5 +23,12 @@ class PostModel {
     this.createdAt,
     this.updateAt,
   });
+
+  // fromMap //without comments
+  // toMap //without comments
+  // create
+  // update
+  // delete
+
 }
 

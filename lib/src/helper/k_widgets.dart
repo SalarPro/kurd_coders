@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:kurd_coders/src/helper/k_colors.dart';
 import 'package:kurd_coders/src/helper/k_text_style.dart';
@@ -12,6 +14,7 @@ class KWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 25),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         decoration: BoxDecoration(
           boxShadow: [
@@ -96,5 +99,31 @@ class KWidget {
         ),
       ),
     );
+  }
+
+  static loadingView(bool isLoading, {String? text}) {
+    if (isLoading) {
+      return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(
+                  height: 20,
+                ),
+                if (text != null) Text(text)
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kurd_coders/src/helper/k_text_style.dart';
@@ -28,26 +26,7 @@ class FirebaseeTestScreenState extends State<FirebaseTestScreen> {
       body: Stack(
         children: [
           _body,
-          if (isLoading)
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text("Loading")
-                    ],
-                  ),
-                ),
-              ),
-            )
+          KWidget.loadingView(true, text: "Loading.."),
         ],
       ),
     );

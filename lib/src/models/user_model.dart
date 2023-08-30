@@ -16,5 +16,11 @@ class UserModel {
     this.avatarUrl,
     this.birthday,
   });
+
+   // fromMap
+  // toMap
+  // create
+  // update
+  // delete
 }
 
