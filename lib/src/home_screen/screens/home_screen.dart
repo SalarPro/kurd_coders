@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
-import 'package:kurd_coders/src/damy_data.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/post/post_view_screen.dart';
 import 'package:like_button/like_button.dart';
@@ -16,25 +15,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<PostModel> homePost = [];
-
-  loadData() async {
-    await Future.delayed(Duration(seconds: 2));
-    homePost = myPosts;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadData();
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (homePost.isEmpty) {
-      return ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+    return StreamBuilder<List<PostModel>>(
+      stream: PostModel.streamAll(),
+      builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return loadingListView;
+        }
+        List<PostModel> homePost = snapshot.data!;
+        return ListView.builder(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom + 100,
+            top: MediaQuery.of(context).padding.top,
+          ),
+          itemCount: homePost.length,
+          itemBuilder: (context, index) {
+            return cellType1(post: homePost[index]);
+          },
+        );
+      },
+    );
+  }
+
+  Widget get loadingListView => ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).padding.bottom + 100,
           top: MediaQuery.of(context).padding.top,
@@ -44,19 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
           return loadingCell();
         },
       );
-    } else {
-      return ListView.builder(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom + 100,
-          top: MediaQuery.of(context).padding.top,
-        ),
-        itemCount: homePost.length,
-        itemBuilder: (context, index) {
-          return cellType1(post: homePost[index]);
-        },
-      );
-    }
-  }
 
   Widget cellType1({required PostModel post}) {
     return GestureDetector(
@@ -100,7 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         if (post.createdAt != null)
                           Text(
-                            DateFormat('M/d hh:mma').format(post.createdAt!),
+                            DateFormat('M/d hh:mma')
+                                .format(post.createdAt!.toDate()),
                             style: TextStyle(
                                 fontSize: 11, color: Colors.grey.shade500),
                           ),

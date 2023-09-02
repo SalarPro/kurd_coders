@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
@@ -193,7 +194,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               ),
               if (widget.post.createdAt != null)
                 Text(
-                  DateFormat('M/d hh:mma').format(widget.post.createdAt!),
+                  DateFormat('M/d hh:mma').format(widget.post.createdAt!.toDate()),
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
             ],
@@ -298,7 +299,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
                 if (comment.createdAt != null)
                   Text(
-                    DateFormat('M/d hh:mma').format(comment.createdAt!),
+                    DateFormat('M/d hh:mma').format(comment.createdAt!.toDate()),
                     style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                   ),
               ],
@@ -322,8 +323,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
     post.comments?.add(CommentModel(
       comment: comment,
-      userId: "1",
-      createdAt: DateTime.now(),
+      userUid: "1",
+      createdAt: Timestamp.now(),
     ));
 
     FocusManager.instance.primaryFocus?.unfocus();

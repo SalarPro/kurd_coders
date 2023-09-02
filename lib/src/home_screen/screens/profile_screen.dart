@@ -52,7 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         TextItem(
                           text: Text(
-                            DateFormat("yyyy M d").format(myUser.birthday!),
+                            DateFormat("yyyy M d")
+                                .format(myUser.birthday!.toDate()),
                             style: TextStyle(
                               fontSize: 20,
                               color: const Color.fromARGB(255, 255, 255, 255),
@@ -152,7 +153,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(myUser.bio!),
-                  
                 ],
               ),
             ),

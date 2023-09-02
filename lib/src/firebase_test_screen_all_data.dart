@@ -64,7 +64,9 @@ class _FirebaseTestBulkDataState extends State<FirebaseTestBulkData> {
               return KWidget.loadingView(true);
             }
 
-            var myDocs = snpashot.data!.docs;
+            List<QueryDocumentSnapshot<Map<String, dynamic>>> myDocs = snpashot.data!.docs;
+
+          
 
             List<NoteModel> myNotes = [];
             for (var note in myDocs) {

@@ -1,16 +1,73 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CommentModel {
-  String? id;
-  String? userId;
+  String? uid;
+  String? userUid;
   String? comment;
-  DateTime? createdAt;
+  Timestamp? createdAt;
 
   CommentModel({
-    this.id,
-    this.userId,
+    this.uid,
+    this.userUid,
     this.comment,
     this.createdAt,
   });
 
   // fromMap
+  factory CommentModel.fromMap(Map<String, dynamic> map) {
+    return CommentModel(
+      uid: map['uid'],
+      userUid: map['userUid'],
+      comment: map['comment'],
+      createdAt: map['createdAt'],
+    );
+  }
+
   // toMap
+  Map<String, dynamic> toMap() {
+    return {
+      "uid": uid,
+      "userUid": userUid,
+      "comment": comment,
+      "createdAt": createdAt,
+    };
+  }
 }
+
+
+// jsonFIle
+
+/* [
+    [
+      "uid" : "1",
+      "userUid" : "213",
+      "comment" : "Hi",
+      "createdAt" : "2023",
+    ],
+    [
+      "uid" : "1",
+      "userUid" : "213",
+      "comment" : "Hi",
+      "createdAt" : "2023",
+    ],
+    [
+      "uid" : "1",
+      "userUid" : "213",
+      "comment" : "Hi",
+      "createdAt" : "2023",
+    ],
+    [
+      "uid" : "1",
+      "userUid" : "213",
+      "comment" : "Hi",
+      "createdAt" : "2023",
+    ],
+    [
+      "uid" : "1",
+      "userUid" : "213",
+      "comment" : "Hi",
+      "createdAt" : "2023",
+    ],
+
+
+] */

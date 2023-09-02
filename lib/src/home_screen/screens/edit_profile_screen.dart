@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
@@ -37,7 +38,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
     nameTEC.text = myUser.name ?? "";
     usernameTEC.text = myUser.username ?? "";
     emailTEC.text = myUser.email ?? "";
-    userBirthday = myUser.birthday;
+    userBirthday = myUser.birthday?.toDate();
 
     userAvatarUrl = myUser.avatarUrl;
   }
@@ -378,7 +379,9 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
     myUser.bio = bioTEC.text;
     myUser.name = nameTEC.text;
     myUser.username = usernameTEC.text;
-    myUser.birthday = userBirthday;
+    if (userBirthday != null) {
+      myUser.birthday = Timestamp.fromDate(userBirthday!);
+    }
 
     setState(() {});
 
