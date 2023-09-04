@@ -20,8 +20,6 @@ Post:
  */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kurd_coders/src/models/comment_model.dart';
-import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/models/user_model.dart';
 
 UserModel myUser = UserModel(
@@ -35,7 +33,7 @@ UserModel myUser = UserModel(
   username: "salarpro",
 );
 
-List<PostModel> get myPosts => [
+/* List<PostModel> get myPosts => [
       PostModel(
         uid: "1",
         userUid: "1",
@@ -171,7 +169,7 @@ List<PostModel> get myPosts => [
         createdAt: Timestamp.fromDate(DateTime(2023, 8, 25, 5, 25)),
         updateAt: Timestamp.fromDate(DateTime(2023, 8, 25, 5, 25)),
       ),
-    ];
+    ]; */
 
 /* 
 List<Map<String, dynamic>> posts = [

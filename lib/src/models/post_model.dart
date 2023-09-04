@@ -10,8 +10,6 @@ class PostModel {
 
   List<String>? likesUserUID;
 
-  List<CommentModel>? comments;
-
   Timestamp? createdAt;
   Timestamp? updateAt;
 
@@ -21,7 +19,6 @@ class PostModel {
     this.text,
     this.imageUrl,
     this.likesUserUID,
-    this.comments,
     this.createdAt,
     this.updateAt,
   });
@@ -34,22 +31,19 @@ class PostModel {
       text: map['text'],
       imageUrl: map['imageUrl'],
       likesUserUID: List<String>.from(map['likesUserUID']),
-      comments: List<CommentModel>.from(
-          map['comments']?.map((e) => CommentModel.fromMap(e))),
       createdAt: map['createdAt'],
       updateAt: map['updateAt'],
     );
   }
 
   // toMap
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({allFields = false}) {
     return {
       "uid": uid,
       "userUid": userUid,
       "text": text,
       "imageUrl": imageUrl,
-      "likesUserUID": likesUserUID,
-      "comments": comments?.map((e) => e.toMap()).toList(),
+      if (allFields) "likesUserUID": likesUserUID,
       "createdAt": createdAt,
       "updateAt": updateAt,
     };
@@ -61,8 +55,11 @@ class PostModel {
     createdAt ??= Timestamp.now();
     updateAt ??= Timestamp.now();
     likesUserUID ??= [];
-    comments ??= [];
-    await FirebaseFirestore.instance.collection("posts").doc(uid).set(toMap());
+
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(uid)
+        .set(toMap(allFields: true));
   }
 
   // update
@@ -72,6 +69,23 @@ class PostModel {
         .collection("posts")
         .doc(uid)
         .update(toMap());
+  }
+
+  // update
+  Future<void> updateLike({required String userId, required bool isAdd}) async {
+    await FirebaseFirestore.instance.collection("posts").doc(uid).update({
+      if (isAdd) "likesUserUID": FieldValue.arrayUnion([userId]),
+      if (!isAdd) "likesUserUID": FieldValue.arrayRemove([userId]),
+    });
+  }
+
+  // update
+  Future<void> addComment({required CommentModel comment}) async {
+    await comment.create(uid!);
+  }
+
+  Future<void> removeComment({required CommentModel comment}) async {
+    await comment.delete(uid!);
   }
 
   // delete
@@ -86,6 +100,27 @@ class PostModel {
         .snapshots()
         .map((snapshotData) =>
             snapshotData.docs.map((e) => PostModel.fromMap(e.data())).toList());
+  }
+
+  Stream<List<CommentModel>> streamAllComments() {
+    return FirebaseFirestore.instance
+        .collection("posts")
+        .doc(uid!)
+        .collection("comments")
+        .orderBy("createdAt")
+        .snapshots()
+        .map((snapshotData) => snapshotData.docs
+            .map((e) => CommentModel.fromMap(e.data()))
+            .toList());
+  }
+
+  static Stream<PostModel> streamOne(String? docID) {
+    return FirebaseFirestore.instance
+        .collection("posts")
+        .doc(docID)
+        .snapshots()
+        .map((snapshotData) =>
+            PostModel.fromMap(snapshotData.data() as Map<String, dynamic>));
   }
 }
 

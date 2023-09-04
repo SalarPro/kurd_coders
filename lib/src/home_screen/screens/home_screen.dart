@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (snapshot.data == null) {
           return loadingListView;
         }
+        print("Stream updated");
         List<PostModel> homePost = snapshot.data!;
         return ListView.builder(
           padding: EdgeInsets.only(
@@ -54,18 +56,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => PostViewScreen(
-                      post: post,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (_) => PostViewScreen(
+              post: post,
+            ),
+          ),
+        );
       },
       child: Stack(
         children: [
           Container(
             width: double.infinity,
-            margin: EdgeInsets.all(16),
-            padding: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(13),
@@ -82,11 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 40,
                       ).image,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Azad Khorshed",
                           style: TextStyle(fontSize: 15),
                         ),
@@ -101,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
@@ -116,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 if (post.imageUrl != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(13),
@@ -136,11 +140,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       errorWidget: (context, url, error) {
-                        return Text("Image Not available");
+                        return const Text("Image Not available");
                       },
                     ),
                   ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -159,14 +163,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   LikeButton(
                     likeCount: post.likesUserUID?.length ?? 0,
-                    isLiked: post.likesUserUID?.contains("2210") ?? false,
+                    isLiked: post.likesUserUID?.contains("1") ?? false,
                     onTap: (value) async {
+                      /*  
+                      if (value == false) {
+                        post.updateLike(isAdd: true, userId: "1");
+                      } else if (value == true) {
+                        post.updateLike(isAdd: false, userId: "1");
+                      } */
+                      post.updateLike(isAdd: !value, userId: "1");
                       return !value;
                     },
                   ),
@@ -201,15 +212,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   ],
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      post.comments?.length.toString() ?? "0",
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection("posts")
+                          .doc(post.uid)
+                          .collection("comments")
+                          .count()
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.data == null) {
+                          return const SizedBox(
+                            width: 10,
+                            height: 10,
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        var commentCounts = snapshot.data?.count ?? -1;
+
+                        return Text(
+                          "$commentCounts",
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        );
+                      },
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Image.asset(
                       Assets.resourceIconsIconComment,
                       width: 20,
@@ -292,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(

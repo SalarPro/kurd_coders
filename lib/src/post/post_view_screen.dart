@@ -5,11 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/helper/k_colors.dart';
 import 'package:kurd_coders/src/helper/k_text_style.dart';
+import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/models/comment_model.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
 import 'package:like_button/like_button.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:uuid/uuid.dart';
 
 class PostViewScreen extends StatefulWidget {
   const PostViewScreen(
@@ -26,14 +28,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
   var commentETC = TextEditingController();
   var focusNode = FocusNode();
 
-  late PostModel post;
-
   ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    post = widget.post;
 
     if (widget.isToOpenTheCOmment) {
       Future.delayed(const Duration(milliseconds: 50), () {
@@ -56,40 +55,53 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   get _body => SingleChildScrollView(
         controller: scrollController,
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 16,
-            ),
-            postOwner(),
-            const SizedBox(height: 10),
-            postText(),
-            const SizedBox(height: 10),
-            if (widget.post.imageUrl != null) postImage(),
-            const SizedBox(height: 0),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+        child: StreamBuilder<PostModel>(
+          stream: PostModel.streamOne(widget.post.uid),
+          builder: (context, snapshot) {
+            if (snapshot.data == null) {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: KWidget.loadingView(true),
+              );
+            }
+            var postModel = snapshot.data!;
+
+            return Column(
               children: [
-                SizedBox(
-                  width: 16,
+                const SizedBox(
+                  height: 16,
                 ),
-                likeWidget(),
-                SizedBox(
-                  width: 16,
+                postOwner(postModel),
+                const SizedBox(height: 10),
+                postText(postModel),
+                const SizedBox(height: 10),
+                if (widget.post.imageUrl != null) postImage(postModel),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    likeWidget(postModel),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    commentWidget(postModel)
+                  ],
                 ),
-                commentWidget()
+                commentSection(postModel),
+                const SizedBox(
+                  height: 50,
+                )
               ],
-            ),
-            commentSection(),
-            const SizedBox(
-              height: 50,
-            )
-          ],
+            );
+          },
         ),
       );
 
-  Widget commentWidget() {
+  Widget commentWidget(PostModel post) {
     return GestureDetector(
       onTap: () {
         focusNode.requestFocus();
@@ -111,7 +123,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              post.comments?.length.toString() ?? "0",
+              "nine",
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             SizedBox(width: 4),
@@ -126,7 +138,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  Widget postImage() {
+  Widget postImage(PostModel post) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
@@ -154,7 +166,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  Padding postText() {
+  Padding postText(PostModel post) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 26),
       child: Row(
@@ -171,7 +183,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  Widget postOwner() {
+  Widget postOwner(PostModel post) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -194,7 +206,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
               ),
               if (widget.post.createdAt != null)
                 Text(
-                  DateFormat('M/d hh:mma').format(widget.post.createdAt!.toDate()),
+                  DateFormat('M/d hh:mma')
+                      .format(widget.post.createdAt!.toDate()),
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
             ],
@@ -204,7 +217,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  Container likeWidget() {
+  Container likeWidget(PostModel post) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -223,8 +236,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
         children: [
           LikeButton(
             likeCount: post.likesUserUID?.length ?? 0,
-            isLiked: post.likesUserUID?.contains("2210") ?? false,
+            isLiked: post.likesUserUID?.contains("1") ?? false,
             onTap: (value) async {
+              post.updateLike(userId: "1", isAdd: !value);
               return !value;
             },
           ),
@@ -233,84 +247,125 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  Widget commentSection() {
-    return Column(
-      children: [
-        SizedBox(
-          height: 16,
-        ),
-        KTextField(
-          focusNode: focusNode,
-          controller: commentETC,
-          hint: "Write a comment",
-          dynamicHeight: true,
-          suffixIcon: IconButton(
-              onPressed: () => postComment(), icon: Icon(Icons.send)),
-        ),
+  Widget commentSection(PostModel post) {
+    return StreamBuilder<List<CommentModel>>(
+      stream: post.streamAllComments(),
+      builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-        // for (var i = 0; i < (widget.post.comments?.length ?? 0); i++)
-        //   commentCell(widget.post.comments![i]),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: post.comments?.length ?? 0,
-          itemBuilder: (conetxt, index) {
-            return commentCell(widget.post.comments![index]);
-          },
-        )
-      ],
-    );
-  }
+        var comments = snapshot.data!;
 
-  Widget commentCell(CommentModel comment) {
-    return Container(
-      decoration: BoxDecoration(
-        color: KColors.white,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 5,
-            color: Colors.black.withAlpha(100),
-            offset: Offset(2, 4),
-          )
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: Image.asset(
-              Assets.resourceImagesPersone,
-              width: 40,
-              height: 40,
-            ).image,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  comment.comment ?? "",
-                  style: KTextStyle.textColorDark(18),
-                ),
-                if (comment.createdAt != null)
-                  Text(
-                    DateFormat('M/d hh:mma').format(comment.createdAt!.toDate()),
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-                  ),
-              ],
+        return Column(
+          children: [
+            SizedBox(
+              height: 16,
             ),
-          )
-        ],
+            KTextField(
+              focusNode: focusNode,
+              controller: commentETC,
+              hint: "Write a comment",
+              dynamicHeight: true,
+              suffixIcon: IconButton(
+                  onPressed: () => postComment(post), icon: Icon(Icons.send)),
+            ),
+
+            // for (var i = 0; i < (widget.post.comments?.length ?? 0); i++)
+            //   commentCell(widget.post.comments![i]),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: comments.length,
+              itemBuilder: (conetxt, index) {
+                return commentCell(comments[index], post);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget commentCell(CommentModel comment, PostModel post) {
+    return GestureDetector(
+      onLongPress: () {
+        if (comment.userUid == "1") {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text("Delete your Comment"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        comment.delete(post.uid!);
+                        Navigator.pop(context);
+                      },
+                      child: Text("Delete"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Cancel"),
+                    ),
+                  ],
+                );
+              });
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: KColors.white,
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 5,
+              color: Colors.black.withAlpha(100),
+              offset: Offset(2, 4),
+            )
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundImage: Image.asset(
+                Assets.resourceImagesPersone,
+                width: 40,
+                height: 40,
+              ).image,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    comment.comment ?? "",
+                    style: KTextStyle.textColorDark(18),
+                  ),
+                  if (comment.createdAt != null)
+                    Text(
+                      DateFormat('M/d hh:mma')
+                          .format(comment.createdAt!.toDate()),
+                      style:
+                          TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                    ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  postComment() {
+  postComment(PostModel post) {
     var comment = commentETC.text.trim();
 
     if (comment.isEmpty) {
@@ -321,11 +376,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
       return;
     }
 
-    post.comments?.add(CommentModel(
+    var cCommment = CommentModel(
+      uid: Uuid().v4(),
       comment: comment,
       userUid: "1",
       createdAt: Timestamp.now(),
-    ));
+    );
+
+    post.addComment(comment: cCommment);
 
     FocusManager.instance.primaryFocus?.unfocus();
 
@@ -336,6 +394,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
     commentETC.clear();
 
+    // scroll to the bottom of the screen
     Future.delayed(const Duration(milliseconds: 200), () {
       scrollController.animateTo(
         scrollController.position.maxScrollExtent,
@@ -343,7 +402,5 @@ class _PostViewScreenState extends State<PostViewScreen> {
         curve: Curves.easeOutBack,
       );
     });
-
-    setState(() {});
   }
 }

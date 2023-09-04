@@ -32,6 +32,26 @@ class CommentModel {
       "createdAt": createdAt,
     };
   }
+
+  Future create(String postUID) async {
+    createdAt ??= Timestamp.now();
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postUID)
+        .collection("comments")
+        .doc(uid)
+        .set(toMap());
+  }
+
+  Future delete(String postUID) async {
+    createdAt ??= Timestamp.now();
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postUID)
+        .collection("comments")
+        .doc(uid)
+        .delete();
+  }
 }
 
 
