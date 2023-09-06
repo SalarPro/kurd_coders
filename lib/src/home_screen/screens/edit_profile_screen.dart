@@ -5,14 +5,17 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
-import 'package:kurd_coders/src/damy_data.dart';
 import 'package:kurd_coders/src/helper/k_colors.dart';
 import 'package:kurd_coders/src/helper/k_helper.dart';
 import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/login_screen/login_screen.dart';
+import 'package:kurd_coders/src/models/user_model.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
+import 'package:kurd_coders/src/providers/app_provider.dart';
+import 'package:provider/provider.dart';
 
 class EditPRofileScreen extends StatefulWidget {
   const EditPRofileScreen({super.key});
@@ -34,13 +37,19 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
   bool isLoading = false;
 
   loadData() {
-    bioTEC.text = myUser.bio ?? "";
-    nameTEC.text = myUser.name ?? "";
-    usernameTEC.text = myUser.username ?? "";
-    emailTEC.text = myUser.email ?? "";
-    userBirthday = myUser.birthday?.toDate();
+    UserModel? user = Provider.of<AppProvider>(context, listen: false).myUser;
 
-    userAvatarUrl = myUser.avatarUrl;
+    if (user == null) {
+      Get.back();
+    }
+
+    bioTEC.text = user?.bio ?? "";
+    nameTEC.text = user?.name ?? "";
+    usernameTEC.text = user?.username ?? "";
+    emailTEC.text = user?.email ?? "";
+    userBirthday = user?.birthday?.toDate();
+
+    userAvatarUrl = user?.avatarUrl;
   }
 
   @override
@@ -208,14 +217,26 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
                   bgColor: KColors.dangerColor,
                   color: KColors.white,
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(
+                    Get.offAll(() => LoginScreen());
+
+                    /*  Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (route) => false);
+                        (route) => false); */
                   }),
               SizedBox(
                 height: 50,
               ),
+              /* KWidget.btnMedium(
+                  title: "Change to Home ",
+                  bgColor: KColors.successColor,
+                  color: KColors.white,
+                  onTap: () {
+                    Provider.of<AppProvider>(context, listen: false)
+                        .changeIndex(0);
+                    
+      Get.back();
+                  }), */
             ],
           ),
         ),
@@ -265,7 +286,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
   get _appBarBackIcon => Center(
         child: GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            Get.back();
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -327,13 +348,13 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
             child: Text("No"),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
               save();
             },
             child: Text("Yes"),
@@ -375,13 +396,17 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
 
     await Future.delayed(Duration(seconds: 2));
 
+    UserModel? user = Provider.of<AppProvider>(context, listen: false).myUser;
+
     // TODO: save to database
-    myUser.bio = bioTEC.text;
-    myUser.name = nameTEC.text;
-    myUser.username = usernameTEC.text;
+    user?.bio = bioTEC.text;
+    user?.name = nameTEC.text;
+    user?.username = usernameTEC.text;
     if (userBirthday != null) {
-      myUser.birthday = Timestamp.fromDate(userBirthday!);
+      user?.birthday = Timestamp.fromDate(userBirthday!);
     }
+
+    Provider.of<AppProvider>(context, listen: false).myUser = user;
 
     setState(() {});
 
@@ -392,7 +417,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
       ),
     );
 
-    Navigator.pop(context);
+    Get.back();
   }
 }
 

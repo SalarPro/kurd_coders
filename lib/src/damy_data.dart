@@ -19,10 +19,8 @@ Post:
 
  */
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kurd_coders/src/models/user_model.dart';
 
-UserModel myUser = UserModel(
+/* UserModel myUser = UserModel(
   uid: "1",
   avatarUrl:
       "https://media.sketchfab.com/models/624acae4597c40eb90aebc2650bc99bf/thumbnails/09e3261cc6204116b5fc611acb4eda6d/f4957ec96b79488298ec52c245986898.jpeg",
@@ -32,7 +30,7 @@ UserModel myUser = UserModel(
   name: "Salar Khalid",
   username: "salarpro",
 );
-
+ */
 /* List<PostModel> get myPosts => [
       PostModel(
         uid: "1",

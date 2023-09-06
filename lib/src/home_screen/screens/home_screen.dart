@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/post/post_view_screen.dart';
+import 'package:kurd_coders/src/providers/app_provider.dart';
 import 'package:like_button/like_button.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,27 +19,41 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AppProvider? appProvider;
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<PostModel>>(
-      stream: PostModel.streamAll(),
-      builder: (context, snapshot) {
-        if (snapshot.data == null) {
-          return loadingListView;
-        }
-        print("Stream updated");
-        List<PostModel> homePost = snapshot.data!;
-        return ListView.builder(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + 100,
-            top: MediaQuery.of(context).padding.top,
-          ),
-          itemCount: homePost.length,
-          itemBuilder: (context, index) {
-            return cellType1(post: homePost[index]);
-          },
-        );
-      },
+    appProvider ??= Provider.of<AppProvider>(context);
+    return Scaffold(
+      backgroundColor: appProvider!.scafoldBackground,
+      appBar: AppBar(
+        title: Switch(
+            value: Provider.of<AppProvider>(context).isDarkMood,
+            onChanged: (value) {
+              Provider.of<AppProvider>(context, listen: false)
+                  .updateAppearance(value);
+            }),
+      ),
+      body: StreamBuilder<List<PostModel>>(
+        stream: PostModel.streamAll(),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return loadingListView;
+          }
+          print("Stream updated");
+          List<PostModel> homePost = snapshot.data!;
+          return ListView.builder(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 100,
+              top: MediaQuery.of(context).padding.top,
+            ),
+            itemCount: homePost.length,
+            itemBuilder: (context, index) {
+              return cellType1(post: homePost[index]);
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -55,14 +72,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget cellType1({required PostModel post}) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Get.to(() => PostViewScreen(
+              post: post,
+            ));
+        /* Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => PostViewScreen(
               post: post,
             ),
           ),
-        );
+        ); */
       },
       child: Stack(
         children: [
@@ -71,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: appProvider!.background,
               borderRadius: BorderRadius.circular(13),
             ),
             child: Column(
@@ -90,16 +110,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Azad Khorshed",
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: appProvider!.TextColor,
+                          ),
                         ),
                         if (post.createdAt != null)
                           Text(
                             DateFormat('M/d hh:mma')
                                 .format(post.createdAt!.toDate()),
                             style: TextStyle(
-                                fontSize: 11, color: Colors.grey.shade500),
+                              fontSize: 11,
+                              color: appProvider!.TextColor1,
+                            ),
                           ),
                       ],
                     )
@@ -190,7 +215,13 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 150,
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
+                Get.to(
+                  () => PostViewScreen(
+                    post: post,
+                    isToOpenTheCOmment: true,
+                  ),
+                );
+                /* Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => PostViewScreen(
@@ -198,7 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       isToOpenTheCOmment: true,
                     ),
                   ),
-                );
+                ) */
+                ;
               },
               child: Container(
                 decoration: BoxDecoration(

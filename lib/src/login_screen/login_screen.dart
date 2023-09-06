@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/home_screen/main_screen.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
@@ -85,8 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget get loginBtn {
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (contex) => MainScreen()));
+        Get.off(() => MainScreen());
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (contex) => MainScreen()));
       },
       child: Center(
         child: Container(

@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/home_screen/screens/add_new_post_scree.dart';
 import 'package:kurd_coders/src/home_screen/screens/home_screen.dart';
 import 'package:kurd_coders/src/home_screen/screens/profile_screen.dart';
+import 'package:kurd_coders/src/providers/app_provider.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,8 +17,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedNavigatorIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget get _body {
-    switch (_selectedNavigatorIndex) {
+    switch (Provider.of<AppProvider>(context).selectedNavigatorIndex) {
       case 0:
         return HomeScreen();
       case 1:
@@ -84,15 +85,15 @@ class _MainScreenState extends State<MainScreen> {
     required String imagePath,
     required int index,
   }) {
-    var isSelected = _selectedNavigatorIndex == index;
+    var isSelected =
+        Provider.of<AppProvider>(context).selectedNavigatorIndex == index;
 
     if (index == -1) {
       return Transform.translate(
         offset: Offset(0, -10),
         child: GestureDetector(
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (_) => AddNewPostScreen()));
+            Get.to(() => AddNewPostScreen());
           },
           child: Container(
             width: 50,
@@ -113,9 +114,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedNavigatorIndex = index;
-        });
+        Provider.of<AppProvider>(context, listen: false).changeIndex(index);
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

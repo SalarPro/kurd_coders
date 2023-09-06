@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/helper/k_colors.dart';
 import 'package:kurd_coders/src/helper/k_helper.dart';
@@ -127,7 +128,7 @@ class _AddNewPostScreenState extends State<AddNewPostScreen> {
       isLoading = false;
     });
 
-    Navigator.pop(context);
+    Get.back();
   }
 
   Widget postImageWidget() {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/helper/k_colors.dart';
 import 'package:kurd_coders/src/helper/k_text_style.dart';
@@ -64,9 +65,8 @@ class _FirebaseTestBulkDataState extends State<FirebaseTestBulkData> {
               return KWidget.loadingView(true);
             }
 
-            List<QueryDocumentSnapshot<Map<String, dynamic>>> myDocs = snpashot.data!.docs;
-
-          
+            List<QueryDocumentSnapshot<Map<String, dynamic>>> myDocs =
+                snpashot.data!.docs;
 
             List<NoteModel> myNotes = [];
             for (var note in myDocs) {
@@ -175,14 +175,14 @@ class _FirebaseTestBulkDataState extends State<FirebaseTestBulkData> {
             actions: [
               TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: Text("Cancel")),
               TextButton(
                   onPressed: () async {
                     noteModel.note = localNoteETC.text;
                     noteModel.update();
-                    Navigator.pop(context);
+                   Get.back();
                     // hide keyboard
                     FocusScope.of(context).unfocus();
                   },

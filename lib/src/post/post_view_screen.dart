@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/helper/k_colors.dart';
@@ -300,13 +301,13 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     TextButton(
                       onPressed: () {
                         comment.delete(post.uid!);
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       child: Text("Delete"),
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       child: Text("Cancel"),
                     ),

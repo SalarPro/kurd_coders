@@ -125,7 +125,7 @@ class PostModel {
 }
 
 // mapping data in Dart
-test() {
+/* test() {
   List<Map<String, String>> list = [
     {"num": "1"}, //
     {"num": "2"},
@@ -137,3 +137,4 @@ test() {
   List<int> intList =
       list.map((e) => int.parse(e['num']!)).toList(); //=> [1, 2, 3, 4152, 51];
 }
+ */
