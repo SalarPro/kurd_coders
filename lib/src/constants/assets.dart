@@ -61,6 +61,10 @@ class Assets {
   /// assets/icons/save.png
   static const String resourceIconsSave = "assets/icons/save.png";
 
+  /// Assets for resourceIconsVerified
+  /// assets/icons/verified.png
+  static const String resourceIconsVerified = "assets/icons/verified.png";
+
   /// Assets for resourceImagesCodeImage
   /// assets/images/code_image.jpeg
   static const String resourceImagesCodeImage = "assets/images/code_image.jpeg";

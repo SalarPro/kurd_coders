@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kurd_coders/src/helper/k_colors.dart';
 
 class KHelper {
   static Future<File?> pickImageFromGallery({bool cropTheImage = false}) async {
@@ -50,5 +52,34 @@ class KHelper {
     }
 
     return myImageFile;
+  }
+
+  static showSnackBar(text) {
+    Get.showSnackbar(GetSnackBar(
+      message: text,
+      messageText: Text(
+        text,
+        style: const TextStyle(
+          color: KColors.black,
+          fontSize: 14,
+        ),
+      ),
+      snackPosition: SnackPosition.TOP,
+      borderRadius: 13,
+      duration: 2.seconds,
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
+      backgroundColor: Colors.white,
+      boxShadows: const [
+        BoxShadow(
+          blurRadius: 5,
+          color: Colors.black38,
+          offset: Offset(
+            1,
+            3,
+          ),
+        )
+      ],
+    ));
   }
 }

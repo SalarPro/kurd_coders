@@ -9,6 +9,7 @@ class KColors {
   static const Color darkColor = Color(0xFF252B48);
   static const Color successColor = Color.fromARGB(255, 20, 175, 17);
   static const Color dangerColor = Color.fromARGB(255, 209, 76, 102);
+  static const Color blue = Color.fromARGB(255, 62, 94, 236);
 
   //color with shades
   static MaterialColor get mainColor => const MaterialColor(0xFFF7E987, {

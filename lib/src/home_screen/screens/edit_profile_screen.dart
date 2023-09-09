@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/login_screen/login_screen.dart';
 import 'package:kurd_coders/src/models/user_model.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
-import 'package:kurd_coders/src/providers/app_provider.dart';
+import 'package:kurd_coders/src/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class EditPRofileScreen extends StatefulWidget {
@@ -37,7 +38,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
   bool isLoading = false;
 
   loadData() {
-    UserModel? user = Provider.of<AppProvider>(context, listen: false).myUser;
+    UserModel? user = Provider.of<AuthProvide>(context, listen: false).myUser;
 
     if (user == null) {
       Get.back();
@@ -110,7 +111,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
                 radius: 80,
                 backgroundColor: Colors.grey.shade400,
                 backgroundImage: imageFile == null
-                    ? Image.network(userAvatarUrl!).image
+                    ? Image.network(userAvatarUrl ?? "").image
                     : Image.file(imageFile!).image,
               ),
               SizedBox(
@@ -216,7 +217,11 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
                   title: "logout",
                   bgColor: KColors.dangerColor,
                   color: KColors.white,
-                  onTap: () {
+                  onTap: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await FirebaseAuth.instance.signOut();
                     Get.offAll(() => LoginScreen());
 
                     /*  Navigator.pushAndRemoveUntil(
@@ -396,7 +401,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
 
     await Future.delayed(Duration(seconds: 2));
 
-    UserModel? user = Provider.of<AppProvider>(context, listen: false).myUser;
+    UserModel? user = Provider.of<AuthProvide>(context, listen: false).myUser;
 
     // TODO: save to database
     user?.bio = bioTEC.text;
@@ -406,7 +411,7 @@ class _EditPRofileScreenState extends State<EditPRofileScreen> {
       user?.birthday = Timestamp.fromDate(userBirthday!);
     }
 
-    Provider.of<AppProvider>(context, listen: false).myUser = user;
+    Provider.of<AuthProvide>(context, listen: false).myUser = user;
 
     setState(() {});
 

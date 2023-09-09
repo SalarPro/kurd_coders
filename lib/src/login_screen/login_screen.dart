@@ -1,10 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kurd_coders/src/constants/assets.dart';
+import 'package:kurd_coders/src/helper/k_colors.dart';
+import 'package:kurd_coders/src/helper/k_helper.dart';
+import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/home_screen/main_screen.dart';
+import 'package:kurd_coders/src/login_screen/registration_screen.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
+import 'package:kurd_coders/src/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,11 +19,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  var emailTEC = TextEditingController(text: "info@ztech.krd");
+  var passwordTEC = TextEditingController(text: '12345678');
+
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffeeeeee),
-      body: _body,
+      body: Stack(children: [
+        _body,
+        KWidget.loadingView(isLoading),
+      ]),
     );
   }
 
@@ -33,19 +46,19 @@ class _LoginScreenState extends State<LoginScreen> {
             KTextField(
               title: "Email",
               hint: 'name@example.com',
-              controller: TextEditingController(),
+              controller: emailTEC,
               icon: Assets.resourceIconsMail,
             ),
             KTextField(
               isPassword: true,
               title: "Password",
-              controller: TextEditingController(),
+              controller: passwordTEC,
               icon: Assets.resourceIconsPassword,
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             loginBtn,
+            SizedBox(height: 30),
+            registrationBtn,
             // Spacer(flex: 3),
           ],
         ),
@@ -86,9 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget get loginBtn {
     return GestureDetector(
       onTap: () {
-        Get.off(() => MainScreen());
-        // Navigator.pushReplacement(
-        //     context, MaterialPageRoute(builder: (contex) => MainScreen()));
+        login();
       },
       child: Center(
         child: Container(
@@ -122,5 +133,77 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Widget get registrationBtn {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => RegistrationScreen());
+      },
+      child: Center(
+        child: RichText(
+          text: TextSpan(children: [
+            TextSpan(
+              text: "Don’t have a account!? ",
+              style: TextStyle(
+                color: KColors.black,
+              ),
+            ),
+            TextSpan(
+              text: "Register NOW",
+              style: TextStyle(
+                  color: KColors.blue,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationThickness: 1),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  void login() async {
+    String? email = emailTEC.text;
+    String? password = passwordTEC.text;
+
+    if (!email.isEmail) {
+      KHelper.showSnackBar("PLease enter the email!!!");
+      return;
+    }
+    if (password.length < 8) {
+      KHelper.showSnackBar("Password should be more than 8 character!");
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      if (credential.user != null) {
+        KHelper.showSnackBar('Welcome!');
+
+        var userUID = credential.user!.uid;
+
+        await Provider.of<AuthProvide>(context, listen: false)
+            .fetchUserData(userUID);
+
+        Get.offAll(() => MainScreen());
+      } else {
+        KHelper.showSnackBar('Error: 4564');
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+        KHelper.showSnackBar('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+        KHelper.showSnackBar('Wrong password provided for that user.');
+      }
+    }
   }
 }

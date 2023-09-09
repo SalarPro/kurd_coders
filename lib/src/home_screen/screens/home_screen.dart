@@ -7,6 +7,7 @@ import 'package:kurd_coders/src/constants/assets.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/post/post_view_screen.dart';
 import 'package:kurd_coders/src/providers/app_provider.dart';
+import 'package:kurd_coders/src/providers/auth_provider.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -20,10 +21,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AppProvider? appProvider;
+  AuthProvide? authProvider;
 
   @override
   Widget build(BuildContext context) {
-    appProvider ??= Provider.of<AppProvider>(context);
+    appProvider ??= Provider.of(context);
+    authProvider ??= Provider.of(context);
     return Scaffold(
       backgroundColor: appProvider!.scafoldBackground,
       appBar: AppBar(
@@ -194,7 +197,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   LikeButton(
                     likeCount: post.likesUserUID?.length ?? 0,
-                    isLiked: post.likesUserUID?.contains("1") ?? false,
+                    isLiked: post.likesUserUID
+                            ?.contains(authProvider!.myUser?.uid) ??
+                        false,
                     onTap: (value) async {
                       /*  
                       if (value == false) {
@@ -202,8 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else if (value == true) {
                         post.updateLike(isAdd: false, userId: "1");
                       } */
-                      post.updateLike(isAdd: !value, userId: "1");
-                      return !value;
+
+                      if (authProvider!.myUser != null) {
+                        post.updateLike(
+                            userId: authProvider!.myUser!.uid!, isAdd: !value);
+                        return !value;
+                      }
+                      return value;
                     },
                   ),
                 ],

@@ -11,6 +11,7 @@ import 'package:kurd_coders/src/helper/k_widgets.dart';
 
 import 'package:kurd_coders/src/home_screen/screens/edit_profile_screen.dart';
 import 'package:kurd_coders/src/providers/app_provider.dart';
+import 'package:kurd_coders/src/providers/auth_provider.dart';
 import 'package:kurd_coders/src/tests/screen1.dart';
 import 'package:provider/provider.dart';
 
@@ -22,13 +23,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  AuthProvide? authProvider;
   AppProvider? appProvider;
 
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvide>(context);
     appProvider = Provider.of<AppProvider>(context);
 
-    if (appProvider?.myUser == null) {
+    /* if (appProvider?.myUser == null) {
       return Scaffold(
         body: Center(
           child: KWidget.btnLarge(
@@ -38,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }),
         ),
       );
-    }
+    } */
 
     return Scaffold(
       // backgroundColor: appProvider!.isDarkMood ? Colors.black : Colors.white,
@@ -65,14 +68,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Center(
                   child: CircleAvatar(
                     radius: 70,
-                    backgroundImage: Image.network(appProvider
+                    backgroundImage: Image.network(authProvider
                                 ?.myUser?.avatarUrl ??
                             "https://firebasestorage.googleapis.com/v0/b/fastday-platform.appspot.com/o/1650151825248?alt=media&token=79196c87-152d-4955-a981-2180ba95926c")
                         .image,
                   ),
                 ),
               ),
-              if (appProvider?.myUser?.birthday != null)
+              if (authProvider?.myUser?.birthday != null)
                 Positioned(
                   left: 0,
                   right: 0,
@@ -83,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextItem(
                           text: Text(
                             DateFormat("yyyy M d").format(
-                                appProvider!.myUser!.birthday!.toDate()),
+                                authProvider!.myUser!.birthday!.toDate()),
                             style: TextStyle(
                               fontSize: 20,
                               color: const Color.fromARGB(255, 255, 255, 255),
@@ -109,17 +112,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Center(
                   child: Column(
                     children: [
-                      Text(
-                        appProvider?.myUser?.name ?? "N/A",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            authProvider?.myUser?.name ?? "N/A",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Image.asset(
+                            Assets.resourceIconsVerified,
+                            width: 30,
+                            height: 30,
+                          )
+                        ],
                       ),
                       SizedBox(height: 5),
                       Text(
-                        "@${appProvider?.myUser?.username ?? "N/A"}",
+                        "@${authProvider?.myUser?.username ?? "N/A"}",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black54,
@@ -158,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 top: 16,
                 child: GestureDetector(
                   onTap: () {
-                    appProvider?.signOut();
+                    authProvider?.signOut();
                   },
                   child: SafeArea(
                     child: Icon(Icons.logout),
@@ -168,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           SizedBox(height: 30),
-          if (appProvider?.myUser?.bio != null)
+          if (authProvider?.myUser?.bio != null)
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -195,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Text(appProvider?.myUser?.bio ?? ""),
+                  Text(authProvider?.myUser?.bio ?? ""),
                 ],
               ),
             ),

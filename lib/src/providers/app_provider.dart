@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kurd_coders/src/models/user_model.dart';
 
 class AppProvider extends ChangeNotifier {
-  UserModel? myUser;
+  
 
   int selectedNavigatorIndex = 0;
 
@@ -13,25 +11,9 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  signInTheUser(String email) {
-    myUser = UserModel(
-      uid: "1",
-      avatarUrl:
-          "https://media.sketchfab.com/models/624acae4597c40eb90aebc2650bc99bf/thumbnails/09e3261cc6204116b5fc611acb4eda6d/f4957ec96b79488298ec52c245986898.jpeg",
-      bio: "Flutter app developer",
-      birthday: Timestamp.fromDate(DateTime(1997, 3, 30)),
-      email: email,
-      name: "Salar Khalid",
-      username: "salarpro",
-    );
 
-    notifyListeners();
-  }
 
-  signOut() {
-    myUser = null;
-    notifyListeners();
-  }
+  
 
   bool isDarkMood = false;
 

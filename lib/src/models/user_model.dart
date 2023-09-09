@@ -1,6 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
 
 class UserModel {
   String? uid;
@@ -56,7 +55,6 @@ class UserModel {
 
   // create
   Future<void> create() async {
-    uid ??= const Uuid().v4();
     createdAt ??= Timestamp.now();
     updatedAt ??= Timestamp.now();
     await FirebaseFirestore.instance.collection("users").doc(uid).set(toMap());

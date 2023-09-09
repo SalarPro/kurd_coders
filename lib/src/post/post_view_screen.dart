@@ -10,7 +10,9 @@ import 'package:kurd_coders/src/helper/k_widgets.dart';
 import 'package:kurd_coders/src/models/comment_model.dart';
 import 'package:kurd_coders/src/models/post_model.dart';
 import 'package:kurd_coders/src/my_widgets/k_text_filed.dart';
+import 'package:kurd_coders/src/providers/auth_provider.dart';
 import 'package:like_button/like_button.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uuid/uuid.dart';
 
@@ -29,6 +31,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
   var commentETC = TextEditingController();
   var focusNode = FocusNode();
 
+  AuthProvide? authProvider;
+
   ScrollController scrollController = ScrollController();
 
   @override
@@ -44,6 +48,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    authProvider ??= Provider.of<AuthProvide>(context);
     return Scaffold(
       appBar: _appBar,
       body: _body,
@@ -237,10 +242,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
         children: [
           LikeButton(
             likeCount: post.likesUserUID?.length ?? 0,
-            isLiked: post.likesUserUID?.contains("1") ?? false,
+            isLiked:
+                post.likesUserUID?.contains(authProvider!.myUser?.uid) ?? false,
             onTap: (value) async {
-              post.updateLike(userId: "1", isAdd: !value);
-              return !value;
+              if (authProvider!.myUser != null) {
+                post.updateLike(
+                    userId: authProvider!.myUser!.uid!, isAdd: !value);
+                return !value;
+              }
+              return value;
             },
           ),
         ],
